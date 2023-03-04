@@ -30,20 +30,43 @@ class Server:
         
         while True:
             # Receive action from the user
-            mode = sock.recv(1024).decode()
+            action = sock.recv(8).decode()
 
-            if mode == "login":
-                self.login()
-            elif mode == "register":
-                self.register()
-            elif mode == "exit":
-                break        
+            if action == "login":
+                if self.login(sock) == True:
+                    sock.send("OK".encode())
+                else:
+                    sock.send("ERR".encode())
 
-    def login(self):
-        pass
+            elif action == "register":
+                if self.register(sock) == True:
+                    sock.send("OK".encode())
+                else:
+                    sock.send("ERR".encode())
+                
+            elif action == "exit":
+                print(f"[DISCONNECTED {addr[0]}:{addr[1]}]")
+                break
 
-    def register(self):
-        pass
+        sock.close()
+
+    def login(self, sock):
+        info = sock.recv(128).decode()
+        info = info.split("-")
+        username = info[0]
+        password = info[1]
+
+        print(username, password)
+        return self.db.login(username, password)
+
+    def register(self, sock):
+        info = sock.recv(128).decode()
+        info = info.split("-")
+        username = info[0]
+        password = info[1]
+
+        print(username, password)
+        return self.db.register(username, password)     
 
     def run(self):
         while True:
@@ -51,4 +74,7 @@ class Server:
             print(f"[CONNECTED {addr[0]}:{addr[1]}]")
             # For each connection we create a thread
             threading.Thread(target=self.handle_client, args=(sock, addr)).start()
+            break
+
+        self.acceptSock.close()
             
