@@ -13,7 +13,6 @@ class LoginSystem:
         self.sock.send(data.encode())
 
         # Wait for the response of the server
-        print("waiting")
         response = self.sock.recv(4).decode()
         # Correct info
         if response == "OK":
@@ -38,5 +37,4 @@ class LoginSystem:
     def exit(self):
         self.sock.send("exit".encode())
         self.sock.close()
-        print("Exited")
 

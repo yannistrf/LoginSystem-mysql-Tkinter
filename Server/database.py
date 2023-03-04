@@ -22,10 +22,8 @@ class Database:
         
         # Only one match should return, we have unique usernames
         if result[0] == 1:
-            print(f"WELCOME {username}")
             return True
         
-        print("WRONG CREDENTIALS")
         return False
     
     def register(self, username, password):

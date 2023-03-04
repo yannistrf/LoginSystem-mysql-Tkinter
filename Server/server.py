@@ -56,7 +56,6 @@ class Server:
         username = info[0]
         password = info[1]
 
-        print(username, password)
         return self.db.login(username, password)
 
     def register(self, sock):
@@ -74,7 +73,7 @@ class Server:
             print(f"[CONNECTED {addr[0]}:{addr[1]}]")
             # For each connection we create a thread
             threading.Thread(target=self.handle_client, args=(sock, addr)).start()
-            break
+            
 
         self.acceptSock.close()
-            
+        
