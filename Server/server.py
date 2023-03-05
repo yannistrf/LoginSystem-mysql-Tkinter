@@ -2,7 +2,19 @@ import socket
 import threading
 from database import Database
 
+LOGIN = "LOG "
+REGISTER = "REG "
+EXIT = "EXIT"
+OK = "OK  "
+ERR = "ERR "
+MSGSIZE = 4
+INFOLEN = 128
 
+"""
+    The Server class is responsible for handling the incoming requests
+    from the clients and then communicating with the database. Basically
+    acts as a middle man between the user and the database.
+"""
 class Server:
     def __init__(self, port, host, user, passwd, database):
         # Initialize our database
@@ -24,34 +36,34 @@ class Server:
             exit(-1)
 
         self.acceptSock.listen()
-        print("[SERVER LISTENING...]")   
+        print("[SERVER LISTENING...]\n")   
 
     def handle_client(self, sock, addr):
         
         while True:
             # Receive action from the user
-            action = sock.recv(8).decode()
+            action = sock.recv(MSGSIZE).decode()
 
-            if action == "login":
+            if action == LOGIN:
                 if self.login(sock) == True:
-                    sock.send("OK".encode())
+                    sock.send(OK.encode())
                 else:
-                    sock.send("ERR".encode())
+                    sock.send(ERR.encode())
 
-            elif action == "register":
+            elif action == REGISTER:
                 if self.register(sock) == True:
-                    sock.send("OK".encode())
+                    sock.send(OK.encode())
                 else:
-                    sock.send("ERR".encode())
+                    sock.send(ERR.encode())
                 
-            elif action == "exit":
+            elif action == EXIT:
                 print(f"[DISCONNECTED {addr[0]}:{addr[1]}]")
                 break
 
         sock.close()
 
     def login(self, sock):
-        info = sock.recv(128).decode()
+        info = sock.recv(INFOLEN).decode()
         info = info.split("-")
         username = info[0]
         password = info[1]
@@ -59,12 +71,11 @@ class Server:
         return self.db.login(username, password)
 
     def register(self, sock):
-        info = sock.recv(128).decode()
+        info = sock.recv(INFOLEN).decode()
         info = info.split("-")
         username = info[0]
         password = info[1]
 
-        print(username, password)
         return self.db.register(username, password)     
 
     def run(self):

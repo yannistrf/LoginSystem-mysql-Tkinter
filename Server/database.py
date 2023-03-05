@@ -30,10 +30,8 @@ class Database:
         try:
             self.cursor.execute(f"INSERT INTO user_info VALUES ('{username}', '{password}')")    
             self.database.commit()
-            print("REGISTRATION SUCCESSFUL")
             return True
         except mysql.connector.errors.IntegrityError:
-            print("USERNAME ALREADY IN USE")
             return False
         
     def delete(self, username, password):
