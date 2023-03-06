@@ -16,9 +16,9 @@ INFOLEN = 128
     acts as a middle man between the user and the database.
 """
 class Server:
-    def __init__(self, port, host, user, passwd, database):
+    def __init__(self, port, host, user, passwd, database, users_table):
         # Initialize our database
-        self.db = Database(host, user, passwd, database)
+        self.db = Database(host, user, passwd, database, users_table)
         # Make our socket for incoming connections
         self.acceptSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.port = port
@@ -87,4 +87,6 @@ class Server:
             
 
         self.acceptSock.close()
-        
+    
+server = Server(5050, "localhost","root", "root!", "LoginDB", "name_passwd")
+server.run()

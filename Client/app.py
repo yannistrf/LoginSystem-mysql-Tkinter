@@ -177,4 +177,4 @@ class LoginApp:
 
 
 app = LoginApp("localhost", 5050)
-print(app.run())
+app.run()

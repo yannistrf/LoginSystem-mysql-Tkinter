@@ -5,9 +5,10 @@ import mysql.connector
 """
 class Database:
     # Need the database server information
-    def __init__(self, host, user, passwd, database):
+    def __init__(self, host, user, passwd, database, users_table):
+        self.users_table = users_table
         # try to connect to the database
-        try:    
+        try: 
             self.database = mysql.connector.connect(host=host, user=user, passwd=passwd, database=database)
         # In case of failure terminate the program
         except:
@@ -17,7 +18,7 @@ class Database:
         self.cursor = self.database.cursor()
     
     def login(self, username, password):
-        self.cursor.execute(f"SELECT COUNT(*) FROM user_info WHERE name='{username}' AND password='{password}'")
+        self.cursor.execute(f"SELECT COUNT(*) FROM {self.users_table} WHERE name='{username}' AND password='{password}'")
         result = self.cursor.fetchone()
         
         # Only one match should return, we have unique usernames
@@ -28,7 +29,7 @@ class Database:
     
     def register(self, username, password):
         try:
-            self.cursor.execute(f"INSERT INTO user_info VALUES ('{username}', '{password}')")    
+            self.cursor.execute(f"INSERT INTO {self.users_table} VALUES ('{username}', '{password}')")    
             self.database.commit()
             return True
         except mysql.connector.errors.IntegrityError:
